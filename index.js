@@ -25,18 +25,37 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const menu = client.db("tastyBites").collection("menu");
-    const review = client.db("tastyBites").collection("review");
+    const allMenu = client.db("tastyBites").collection("menu");
+    const allReview = client.db("tastyBites").collection("review");
+    const allCart = client.db("tastyBites").collection("carts");
 
     // all menu items
     app.get("/menu", async (req, res) => {
-      const result = await menu.find().toArray();
+      const result = await allMenu.find().toArray();
       res.send(result);
     });
 
     // all review
     app.get("/review", async (req, res) => {
-      const result = await review.find().toArray();
+      const result = await allReview.find().toArray();
+      res.send(result);
+    });
+
+    // get cart
+    app.get("/carts", async (req, res) => {
+      const email = req.query.email;
+      if (!email) {
+        res.send([]);
+      }
+      const query = { email: email };
+      const result = await allCart.find(query).toArray();
+      res.send(result);
+    });
+
+    // cart collection
+    app.post("/carts", async (req, res) => {
+      const item = req.body;
+      const result = await allCart.insertOne(item);
       res.send(result);
     });
 
