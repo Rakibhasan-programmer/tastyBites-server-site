@@ -130,6 +130,19 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/menu", verifyJwt, verifyAdmin, async (req, res) => {
+      const newItem = req.body;
+      const result = await allMenu.insertOne(newItem);
+      res.send(result);
+    });
+
+    app.delete("/menu/:id", verifyJwt, verifyAdmin, async (req, res) => {
+      const id = req?.params?.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await allMenu.deleteOne(query);
+      res.send(result);
+    });
+
     // all review
     app.get("/review", async (req, res) => {
       const result = await allReview.find().toArray();
